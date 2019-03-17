@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="in.gov.sih.mycity">
+    package="in.gov.sih.mycityapp">
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -17,12 +17,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DetailsActivity" />
+        <activity android:name="in.gov.sih.mycityapp.DetailsActivity" />
         <activity
-            android:name=".LoginActivity"
+            android:name="in.gov.sih.mycityapp.LoginActivity"
             android:noHistory="true" />
         <activity
-            android:name=".SplashScreen"
+            android:name="in.gov.sih.mycityapp.SplashScreen"
             android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,16 +43,16 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".IntroductionActivity"
+            android:name="in.gov.sih.mycityapp.IntroductionActivity"
             android:label="@string/title_activity_introduction" />
         <activity
-            android:name=".MainActivity"
+            android:name="in.gov.sih.mycityapp.MainActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".weather_activity" />
-        <activity android:name=".WebViewActivity" />
-        <activity android:name=".EmailNotVerified" />
-        <activity android:name=".railway_web_activity" />
-        <activity android:name=".ProfileActivity"></activity>
+        <activity android:name="in.gov.sih.mycityapp.weather_activity" />
+        <activity android:name="in.gov.sih.mycityapp.WebViewActivity" />
+        <activity android:name="in.gov.sih.mycityapp.EmailNotVerified" />
+        <activity android:name="in.gov.sih.mycityapp.railway_web_activity" />
+        <activity android:name="in.gov.sih.mycityapp.ProfileActivity"></activity>
     </application>
 
 </manifest>
