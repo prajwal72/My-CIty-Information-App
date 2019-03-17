@@ -112,13 +112,13 @@ public class MainActivity extends EasyLocationAppCompatActivity {
             }
         });
 
-        final DatabaseReference dref=FirebaseDatabase.getInstance().getReference(firebaseUser.getUid());
+        final DatabaseReference dref=FirebaseDatabase.getInstance().getReference("users");
         dref.addListenerForSingleValueEvent(new ValueEventListener() {
              @Override
              public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                 if(!dataSnapshot.hasChild("karma"))
+                 if(!dataSnapshot.child(firebaseUser.getUid()).hasChild("karma"))
                  {
-                     dref.getRef().child("karma").setValue(0);
+                     dref.getRef().child(firebaseUser.getUid()).child("karma").setValue(0);
                  }
              }
 

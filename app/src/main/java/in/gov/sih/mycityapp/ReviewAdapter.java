@@ -53,9 +53,9 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
 
                 vote.put("votes",reviews.get(i).getVotes()+1);
                 href.child(child).child(reviews.get(i).getUserid()).updateChildren(vote);
-                DatabaseReference kref=FirebaseDatabase.getInstance().getReference(reviews.get(i).getUserid());
+                DatabaseReference kref=FirebaseDatabase.getInstance().getReference("users");
 
-                kref.child("karma").addValueEventListener(new ValueEventListener() {
+                kref.child(reviews.get(i).getUserid()).child("karma").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         int v=dataSnapshot.getValue(Integer.class);
@@ -78,9 +78,9 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
 
                 vote.put("votes",reviews.get(i).getVotes()-1);
                 href.child(child).child(reviews.get(i).getUserid()).updateChildren(vote);
-                DatabaseReference kref=FirebaseDatabase.getInstance().getReference(reviews.get(i).getUserid());
+                DatabaseReference kref=FirebaseDatabase.getInstance().getReference("users");
 
-                kref.child("karma").addValueEventListener(new ValueEventListener() {
+                kref.child(reviews.get(i).getUserid()).child("karma").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         int v=dataSnapshot.getValue(Integer.class);
