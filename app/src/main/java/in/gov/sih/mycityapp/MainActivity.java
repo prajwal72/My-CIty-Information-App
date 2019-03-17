@@ -91,13 +91,13 @@ public class MainActivity extends EasyLocationAppCompatActivity {
         user = findViewById(R.id.user);
         user.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
-        final DatabaseReference dref=FirebaseDatabase.getInstance().getReference("karma");
-         dref.addListenerForSingleValueEvent(new ValueEventListener() {
+        final DatabaseReference dref=FirebaseDatabase.getInstance().getReference(FirebaseAuth.getInstance().getUid());
+        dref.addListenerForSingleValueEvent(new ValueEventListener() {
              @Override
              public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                 if(!dataSnapshot.hasChild(FirebaseAuth.getInstance().getUid()))
+                 if(!dataSnapshot.hasChild("karma"))
                  {
-                     dref.getRef().child(FirebaseAuth.getInstance().getUid()).setValue(0);
+                     dref.getRef().child("karma").setValue(0);
                  }
              }
 

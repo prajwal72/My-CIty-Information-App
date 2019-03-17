@@ -46,8 +46,8 @@ public class ProfileActivity extends AppCompatActivity {
         profile = (LinearLayout) findViewById(R.id.profile);
         karmaView = (TextView) findViewById(R.id.karma);
         logOut = (TextView) findViewById(R.id.logout);
-        final DatabaseReference dref=FirebaseDatabase.getInstance().getReference("karma");
-        dref.getRef().child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
+        final DatabaseReference dref=FirebaseDatabase.getInstance().getReference(FirebaseAuth.getInstance().getUid());
+        dref.getRef().child("karma").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 int karma=dataSnapshot.getValue(Integer.class);

@@ -114,7 +114,7 @@
             android:textSize="15sp"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
-            android:text="29"
+            tools:text="29"
             android:id="@+id/karma"
             android:layout_marginTop="4dp"/>
 

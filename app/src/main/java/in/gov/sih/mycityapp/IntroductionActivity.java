@@ -144,7 +144,6 @@ public class IntroductionActivity extends FragmentActivity implements OnMapReady
         utilities.add("Port");
         utilities.add("Restaurants");
         utilities.add("CourtHouse");
-        utilities.add("Yamaha Showroom");
 
         final int intCount = utilPrefs.getInt(address+"count",0);
 
