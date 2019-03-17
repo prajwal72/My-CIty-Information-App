@@ -16,6 +16,12 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -27,14 +33,14 @@ import java.util.List;
 
 public class Information extends Fragment {
 
-        private BufferedReader bufferedReader;
         private ArrayList<Info> info;
         private ArrayAdapter arrayAdapter;
         private ListView list;
         private Context context;
-        private TextView cityName;
+        private DatabaseReference databaseReference;
         private String city;
         private String state;
+        private String location;
         private RelativeLayout progressBar;
 
         public Information() {
@@ -55,12 +61,14 @@ public class Information extends Fragment {
                 list = (ListView)returnView.findViewById(R.id.list);
                 context = getContext();
                 SharedPreferences sharedPreferences=context.getSharedPreferences("MyPrefs",Context.MODE_PRIVATE);
-                SharedPreferences statePreferences=context.getSharedPreferences("StatePrefs",Context.MODE_PRIVATE);
-                cityName = (TextView)returnView.findViewById(R.id.city_name);
+                SharedPreferences statePreferences=context.getSharedPreferences("statePrefs",Context.MODE_PRIVATE);
 
                 info = new ArrayList<>();
                 city = sharedPreferences.getString("address"," ");
                 state = statePreferences.getString(city," ");
+                location = city+","+state;
+
+                databaseReference = FirebaseDatabase.getInstance().getReference();
 
                 arrayAdapter = new InfoAdapter( getActivity(),1,new ArrayList<Info>());
                 arrayAdapter.addAll(info);
@@ -154,7 +162,6 @@ public class Information extends Fragment {
                 for(int i = 1;i < infos.size();i ++){
                         Info info = infos.get(i);
                         if(!info.getValue().trim().equals("") && !(info.getKey().trim().charAt(0) == '•')){
-                                Log.e("jhb", info.getKey() + " : " + info.getValue());
                                 infos.remove(i);
                                 info.setKey("• " + info.getKey());
                                 infos.add(count, info);
@@ -164,8 +171,20 @@ public class Information extends Fragment {
         }
 
         private void getInfo(){
-                ScrapingTask task = new ScrapingTask();
-                task.execute();
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(!dataSnapshot.child("cities").child(location).hasChild("info")){
+                        ScrapingTask task = new ScrapingTask();
+                        task.execute();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
         }
 
         private class ScrapingTask extends AsyncTask {
@@ -196,6 +215,9 @@ public class Information extends Fragment {
                                 int f=0;
                                 String country="Country",nation="Nation";
                                 Elements placex =places.select("tr[class^=merged]");
+                                String header = "General";
+                                int gen_count = 1;
+                                int head_count = 1;
                                 int size = placex.size();
                                 for(int i = 0;i < size;i ++){
                                         try{
@@ -244,10 +266,28 @@ public class Information extends Fragment {
                                                                 }
                                                         }
                                                 }
+                                                key = key.trim();
+                                                value = value.trim();
+                                                if (value.length() == 0){
+                                                    header = key;
+                                                    head_count = 1;
+                                                }
+                                                else if(key.trim().charAt(0) == '•'){
+                                                    l=key.length();
+                                                    key = Integer.toString(head_count) + "_ " + key.substring(2,l);
+                                                    databaseReference.child("cities").child(location).child("info")
+                                                            .child(header).child(key).setValue(value);
+                                                    head_count++;
+                                                }
+                                                else{
+                                                    key = Integer.toString(gen_count) + "_ " + key;
+                                                    databaseReference.child("cities").child(location).child("info")
+                                                            .child("General").child(key).setValue(value);
+                                                    gen_count++;
+                                                }
                                                 infos.add(new Info(key,value));
                                         }
                                         catch (Exception e){
-                                                Log.d("tu bhi kya yaad rakhega","hotel");
                                                 continue;
                                         }
                                 }
