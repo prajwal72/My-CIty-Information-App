@@ -207,10 +207,10 @@ public class Information extends Fragment {
                                                         continue;
                                                 }
                                                 if (f==0)
-                                                        continue;
+                                                    continue;
                                                 String key, value;
-                                                key=placex.select("th").text();
-                                                value=placex.select("td").text();
+                                                key = placex.select("th").text();
+                                                value = placex.select("td").text();
                                                 q=1;
                                                 while(q==1){
                                                         q=0;
@@ -225,6 +225,9 @@ public class Information extends Fragment {
                                                                         q = 1;
                                                                 }
                                                         }
+                                                }
+                                                if (key.contains("Website")){
+                                                    value = placex.select("a").attr("href");
                                                 }
                                                 q=1;
                                                 while(q==1){
