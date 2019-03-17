@@ -26,7 +26,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,8 +35,6 @@ import com.akhgupta.easylocation.EasyLocationRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.location.LocationRequest;
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -58,22 +55,19 @@ public class MainActivity extends EasyLocationAppCompatActivity {
 
     private double lati, longi;
     private String address, district = "";
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     static AutoCompleteTextView mAutoCompleteTextView;
     SharedPreferences mSharedPreferences;
     ArrayAdapter<String> mArrayAdapter;
     RecyclerView common_cities;
-    Button go;
-    GridLayoutManager gridLayoutManager;
 
-    private FirebaseAuth mAuth;
     private String mUsername;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private Button goButton;
     private ImageView mSpeechButton;
     private Toolbar toolbar;
     private ActionBar actionBar;
     private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
+    private FirebaseUser firebaseUser;
 
     @Override
     public void onBackPressed() {
@@ -97,36 +91,12 @@ public class MainActivity extends EasyLocationAppCompatActivity {
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final ImageView loc = (ImageView) findViewById(R.id.location);
+        mSpeechButton = (ImageView) findViewById(R.id.voice_search);
+        goButton = (Button) findViewById(R.id.button);
 
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         UpdateUI(firebaseUser);
-
-        final DatabaseReference dref=FirebaseDatabase.getInstance().getReference(FirebaseAuth.getInstance().getUid());
-        dref.addListenerForSingleValueEvent(new ValueEventListener() {
-             @Override
-             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                 if(!dataSnapshot.hasChild("karma"))
-                 {
-                     dref.getRef().child("karma").setValue(0);
-                 }
-             }
-
-             @Override
-             public void onCancelled(@NonNull DatabaseError databaseError) {
-
-             }
-         });
-
-        InputStream inputStream = getResources().openRawResource(R.raw.cities);
-        ParseCity city = new ParseCity(inputStream);
-        List<String> cities = city.getCity(MainActivity.this);
-        mAutoCompleteTextView = findViewById(R.id.auto);
-        Log.e("check", Integer.toString(cities.size()));
-        mArrayAdapter = new ArrayAdapter<String>(MainActivity.this,
-                android.R.layout.simple_list_item_1,
-                cities);
-        mAutoCompleteTextView.setThreshold(1);
-        mAutoCompleteTextView.setAdapter(mArrayAdapter);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -142,7 +112,40 @@ public class MainActivity extends EasyLocationAppCompatActivity {
             }
         });
 
-        final ImageView loc = (ImageView) findViewById(R.id.location);
+        final DatabaseReference dref=FirebaseDatabase.getInstance().getReference(firebaseUser.getUid());
+        dref.addListenerForSingleValueEvent(new ValueEventListener() {
+             @Override
+             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                 if(!dataSnapshot.hasChild("karma"))
+                 {
+                     dref.getRef().child("karma").setValue(0);
+                 }
+             }
+
+             @Override
+             public void onCancelled(@NonNull DatabaseError databaseError) {
+
+             }
+         });
+
+        mSpeechButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                promptSpeechInput();
+            }
+        });
+
+        InputStream inputStream = getResources().openRawResource(R.raw.cities);
+        ParseCity city = new ParseCity(inputStream);
+        List<String> cities = city.getCity(MainActivity.this);
+        mAutoCompleteTextView = findViewById(R.id.auto);
+        Log.e("check", Integer.toString(cities.size()));
+        mArrayAdapter = new ArrayAdapter<String>(MainActivity.this,
+                android.R.layout.simple_list_item_1,
+                cities);
+        mAutoCompleteTextView.setThreshold(1);
+        mAutoCompleteTextView.setAdapter(mArrayAdapter);
+
         LocationRequest locationRequest = new LocationRequest()
                 .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
                 .setInterval(5000)
@@ -158,16 +161,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
             }
         });
 
-        mSpeechButton = (ImageView) findViewById(R.id.voice_search);
-        mSpeechButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                promptSpeechInput();
-            }
-        });
-
-        go = (Button) findViewById(R.id.button);
-        go.setOnClickListener(new View.OnClickListener() {
+        goButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String selectedCity = mAutoCompleteTextView.getText().toString();
@@ -214,7 +208,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                 if (hasFocus) {
                     check();
                 } else
-                    go.setVisibility(View.GONE);
+                    goButton.setVisibility(View.GONE);
             }
         });
         int[] imgs = {R.drawable.bangalore, R.drawable.chennai, R.drawable.delhi, R.drawable.hyderabad, R.drawable.kolkata, R.drawable.mumbai2, R.drawable.pune2};
@@ -238,7 +232,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
         mUsername = user.getDisplayName();
         userName.setText(mUsername);
         email.setText(user.getEmail());
-        Glide.with(MainActivity.this).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl()).into(imageView);
+        Glide.with(MainActivity.this).load(firebaseUser.getPhotoUrl()).into(imageView);
     }
 
     public void check() {
@@ -247,18 +241,16 @@ public class MainActivity extends EasyLocationAppCompatActivity {
             @Override
             public void run() {
                 if (!mAutoCompleteTextView.getText().toString().trim().equals("")) {
-                    go.setVisibility(View.VISIBLE);
+                    goButton.setVisibility(View.VISIBLE);
 
                 } else {
-                    go.setVisibility(View.GONE);
+                    goButton.setVisibility(View.GONE);
                 }
                 check();
             }
         };
 
         handler.postDelayed(runnable, 1000);
-
-
     }
 
     @Override
@@ -349,64 +341,3 @@ public class MainActivity extends EasyLocationAppCompatActivity {
 
 }
 
-class common_cities_adapter extends RecyclerView.Adapter<common_cities_adapter.ViewHolder> {
-
-    private String[] mData;
-    private int[] imgs;
-    private LayoutInflater mInflater;
-
-
-    // data is passed into the constructor
-    common_cities_adapter(Context context, String[] data, int[] imgs) {
-        this.mInflater = LayoutInflater.from(context);
-        this.mData = data;
-        this.imgs = imgs;
-
-    }
-
-    // inflates the cell layout from xml when needed
-    @Override
-    @NonNull
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.common_cities_item, parent, false);
-        return new ViewHolder(view, parent.getContext());
-    }
-
-    // binds the data to the TextView in each cell
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-        holder.myTextView.setText(mData[position]);
-        holder.myImage.setImageResource(imgs[position]);
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MainActivity.mAutoCompleteTextView.setText(mData[position]);
-            }
-        });
-    }
-
-    // total number of cells
-    @Override
-    public int getItemCount() {
-        return mData.length;
-    }
-
-
-    // stores and recycles views as they are scrolled off screen
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView myTextView;
-        ImageView myImage;
-
-        ViewHolder(View itemView, Context context) {
-            super(itemView);
-            myTextView = itemView.findViewById(R.id.city_name);
-            myImage = itemView.findViewById(R.id.common_cities_image);
-
-        }
-
-
-    }
-
-
-}
