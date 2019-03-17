@@ -1,5 +1,8 @@
 # My City Information App
 
+This Android Application was developed during the finals of Smart India Hackathon, 2019. 
+Link to the original Application: https://github.com/prajwal72/My-city-SIH-2019-official
+
 ## Project Description :
 
 Mobile app to provide all generic public information of selected city of India.Information can be About City Main Attraction , Hotels , Hospitals , Emergency Contact No , School and college , Police stations , Public Representatives , Govt Officials , Old Age Home , Local Train Information , Bus time table Information , Nearest police station based on Geo Location .
