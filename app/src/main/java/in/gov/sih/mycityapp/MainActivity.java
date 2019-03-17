@@ -10,10 +10,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -27,11 +33,13 @@ import android.widget.Toast;
 import com.akhgupta.easylocation.EasyLocationAppCompatActivity;
 import com.akhgupta.easylocation.EasyLocationRequest;
 import com.akhgupta.easylocation.EasyLocationRequestBuilder;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.location.LocationRequest;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,20 +53,10 @@ import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends EasyLocationAppCompatActivity {
-    public static final int RC_SIGN_IN = 1;
-    public static final String ANONYMOUS = "ANONYMOUS";
+
     private final int REQ_CODE_SPEECH_INPUT = 2;
 
-    private LinearLayout popupButton;
-    private LinearLayout root;
-    private LinearLayout popup;
-    private TextView logout;
-
-    private LinearLayout home, profile;
-
-
     private double lati, longi;
-    private TextView user;
     private String address, district = "";
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     static AutoCompleteTextView mAutoCompleteTextView;
@@ -72,7 +70,10 @@ public class MainActivity extends EasyLocationAppCompatActivity {
     private String mUsername;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private ImageView mSpeechButton;
-    private LinearLayout layer;
+    private Toolbar toolbar;
+    private ActionBar actionBar;
+    private DrawerLayout mDrawerLayout;
+    private NavigationView navigationView;
 
     @Override
     public void onBackPressed() {
@@ -87,9 +88,18 @@ public class MainActivity extends EasyLocationAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //startActivity(new Intent(this, DetailsActivity.class));finish();
-        user = findViewById(R.id.user);
-        user.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
+
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        UpdateUI(firebaseUser);
 
         final DatabaseReference dref=FirebaseDatabase.getInstance().getReference(FirebaseAuth.getInstance().getUid());
         dref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -118,6 +128,20 @@ public class MainActivity extends EasyLocationAppCompatActivity {
         mAutoCompleteTextView.setThreshold(1);
         mAutoCompleteTextView.setAdapter(mArrayAdapter);
 
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                int id = menuItem.getItemId();
+                switch (id){
+                    case R.id.sign_out:
+                        AuthUI.getInstance().signOut(MainActivity.this);
+                        Toast.makeText(MainActivity.this, "Signed out!", Toast.LENGTH_SHORT).show();
+                        return true;
+                }
+                return false;
+            }
+        });
+
         final ImageView loc = (ImageView) findViewById(R.id.location);
         LocationRequest locationRequest = new LocationRequest()
                 .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
@@ -131,8 +155,6 @@ public class MainActivity extends EasyLocationAppCompatActivity {
             @Override
             public void onClick(View v) {
                 requestSingleLocationFix(easyLocationRequest);
-               //  mAutoCompleteTextView.setText(getString(R.string.getLocationFromGeoCoder));
-
             }
         });
 
@@ -205,68 +227,18 @@ public class MainActivity extends EasyLocationAppCompatActivity {
 
         common_cities.setAdapter(my_common_citiesadap);
 
-        layer = (LinearLayout) findViewById(R.id.layer);
-        layer.setVisibility(View.GONE);
 
-        logout = (TextView) findViewById(R.id.logout);
+    }
 
-        popupButton = (LinearLayout) findViewById(R.id.popup_button);
-        popup = (LinearLayout) findViewById(R.id.popup);
-        root = (LinearLayout) findViewById(R.id.root);
+    private void UpdateUI(FirebaseUser user) {
+        TextView userName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.userName);
+        TextView email = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email);
+        ImageView imageView = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.imageView);
 
-        popup.setVisibility(View.GONE);
-
-        popupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (popup.getVisibility() == View.GONE) {
-                    layer.setVisibility(View.VISIBLE);
-                    popup.setVisibility(View.VISIBLE);
-                    popup.bringToFront();
-                    root.animate().alpha(0.3f);
-                }
-            }
-        });
-
-        layer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                popup.animate().setDuration(1000).alpha(1f);
-                popup.setVisibility(View.GONE);
-                root.animate().setDuration(1000).alpha(1f);
-                layer.setVisibility(View.GONE);
-            }
-        });
-
-        popup.setOnClickListener(null);
-
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // startActivity(new Intent(MainActivity.this,LoginActivity.class));
-                AuthUI.getInstance()
-                        .signOut(MainActivity.this)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            public void onComplete(@NonNull Task<Void> task) {
-                                // user is now signed out
-                                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                                finish();
-                            }
-                        });
-                Toast.makeText(MainActivity.this, "Signed out!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        home = (LinearLayout) findViewById(R.id.home);
-        profile = (LinearLayout) findViewById(R.id.profile);
-
-        profile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this,ProfileActivity.class));
-            }
-        });
-
+        mUsername = user.getDisplayName();
+        userName.setText(mUsername);
+        email.setText(user.getEmail());
+        Glide.with(MainActivity.this).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl()).into(imageView);
     }
 
     public void check() {
@@ -349,6 +321,16 @@ public class MainActivity extends EasyLocationAppCompatActivity {
         } catch (Exception e) {
 
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

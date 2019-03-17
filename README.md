@@ -1,6 +1,6 @@
 # My City Information App
 
-This Android Application was developed during the finals of Smart India Hackathon, 2019. 
+This Android Application was developed during the finals of Smart India Hackathon, 2019.   
 Link to the original Application: https://github.com/prajwal72/My-city-SIH-2019-official
 
 ## Project Description :
@@ -36,6 +36,7 @@ Mobile app to provide all generic public information of selected city of India.I
 
 ### Libraries used for ImageHandling:
 * Glide
+* CircleImageView
 
 ### Libraries used for GeoLocation:
 * Google Play Services Location

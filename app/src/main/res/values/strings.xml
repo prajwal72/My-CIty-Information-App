@@ -24,4 +24,6 @@
     <string name="sign_out">Sign Out</string>
     <string name="enter_journal_message">Speak Now</string>
     <string name="getLocationFromGeoCoder">Noida</string>
+    <string name="name_tool">Qwerty</string>
+    <string name="email_tool">abc@xyz.com</string>
 </resources>

@@ -50,7 +50,6 @@
         <activity android:name="in.gov.sih.mycityapp.WebViewActivity" />
         <activity android:name="in.gov.sih.mycityapp.EmailNotVerified" />
         <activity android:name="in.gov.sih.mycityapp.railway_web_activity" />
-        <activity android:name="in.gov.sih.mycityapp.ProfileActivity"></activity>
     </application>
 
 </manifest>
