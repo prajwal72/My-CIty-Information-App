@@ -14,6 +14,12 @@ Mobile app to provide all generic public information of selected city of India.I
 
 * Open Android-Studio and select Import Project and select the cloned project from github.
 
+* Open Firebase console and create a new project. Create an Android project with package name as "in.gov.sih.mycityapp". Provide the SHA1 fingerprint of the system.
+
+* Download the google-services.json file and put it in app/
+
+* In Firebase Authentication section, enable Google and Mail sign in.
+
 
 ## Execution Details :
 
