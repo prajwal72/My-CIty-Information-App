@@ -20,16 +20,14 @@
         <activity android:name="in.gov.sih.mycityapp.DetailsActivity" />
         <activity
             android:name="in.gov.sih.mycityapp.LoginActivity"
-            android:noHistory="true" />
-        <activity
-            android:name="in.gov.sih.mycityapp.SplashScreen"
-            android:noHistory="true">
+            android:noHistory="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

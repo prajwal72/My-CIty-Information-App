@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My City</string>
+    <string name="app_name">My City App</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_introduction">Map</string>
@@ -22,6 +22,6 @@
     <string name="login">Login</string>
     <string name="try_again">TRY AGAIN</string>
     <string name="sign_out">Sign Out</string>
-    <string name="enter_journal_message">Enter your journal here</string>
+    <string name="enter_journal_message">Speak Now</string>
     <string name="getLocationFromGeoCoder">Noida</string>
 </resources>
