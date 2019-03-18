@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,14 +25,17 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 public class Information extends Fragment {
 
         private ArrayList<Info> info;
+        private ArrayList<String> header;
         private ArrayAdapter arrayAdapter;
         private ListView list;
         private Context context;
@@ -112,6 +114,35 @@ public class Information extends Fragment {
 
         }
 
+        private class OrderInfo {
+            private String key, value;
+            private int order;
+
+            public OrderInfo(){
+                order = 0;
+                key = "";
+                value = "";
+            }
+
+            public OrderInfo(int order, String key, String value){
+                this.order = order;
+                this.key = key;
+                this.value = value;
+            }
+
+            public int getOrder() {
+                return order;
+            }
+
+            public String getKey() {
+                return key;
+            }
+
+            public String getValue() {
+                return value;
+            }
+        }
+
         private class InfoAdapter extends ArrayAdapter<Info>{
 
                 public InfoAdapter(@NonNull Context context, int resource,
@@ -156,18 +187,36 @@ public class Information extends Fragment {
                 }
         }
 
-        private void rearrangeDetails(ArrayList<Info> infos){
-                infos.add(0, new Info("General", ""));
-                int count = 1;
-                for(int i = 1;i < infos.size();i ++){
-                        Info info = infos.get(i);
-                        if(!info.getValue().trim().equals("") && !(info.getKey().trim().charAt(0) == '•')){
-                                infos.remove(i);
-                                info.setKey("• " + info.getKey());
-                                infos.add(count, info);
-                                count ++;
+        private void rearrangeDetails(ArrayList<Info> infos, String header){
+                ArrayList<Info> infoArrayList = new ArrayList<>();
+                infoArrayList.add(new Info(header,""));
+            ArrayList<OrderInfo> orderInfoArrayList = new ArrayList<>();
+                for (int i = 0; i < infos.size(); i++){
+                    Info info = infos.get(i);
+                    int order = 0;
+                    String key = info.getKey();
+                    String value = info.getValue();
+                    int l = key.length();
+                    for(int j = 0; j < l; j++){
+                        if(key.charAt(j) == '_'){
+                            order = Integer.parseInt(key.substring(0,j));
+                            key = key.substring(j+2);
+                            break;
                         }
+                    }
+                    orderInfoArrayList.add(new OrderInfo(order, key, value));
                 }
+            Collections.sort(orderInfoArrayList,new Comparator<OrderInfo>() {
+                @Override
+                public int compare(OrderInfo o1, OrderInfo o2) {
+                    return ( o1.getOrder() - (o2.getOrder()));
+                }
+            });
+                for (int i = 0; i < orderInfoArrayList.size(); i++){
+                    OrderInfo orderInfo = orderInfoArrayList.get(i);
+                    infoArrayList.add(new Info(orderInfo.getKey(), orderInfo.getValue()));
+                }
+                arrayAdapter.addAll(infoArrayList);
         }
 
         private void getInfo(){
@@ -178,6 +227,39 @@ public class Information extends Fragment {
                         ScrapingTask task = new ScrapingTask();
                         task.execute();
                     }
+                    else{
+                        arrayAdapter.clear();
+                        getHeaders((Map<String,Object>) dataSnapshot.child("cities").child(location).child("info").getValue());
+                        for (String headers: header) {
+                            if(headers.contains("General")){
+                                getDetails((Map<String,Object>) dataSnapshot.child("cities").child(location).child("info").child(headers).getValue(), headers);
+                                break;
+                            }
+                        }
+                        for (String headers: header) {
+                            if(headers.contains("Government")){
+                                getDetails((Map<String,Object>) dataSnapshot.child("cities").child(location).child("info").child(headers).getValue(), headers);
+                                break;
+                            }
+                        }
+                        for (String headers: header) {
+                            if(headers.contains("Area")){
+                                getDetails((Map<String,Object>) dataSnapshot.child("cities").child(location).child("info").child(headers).getValue(), headers);
+                                break;
+                            }
+                        }
+                        for (String headers: header) {
+                            if(headers.contains("Population")){
+                                getDetails((Map<String,Object>) dataSnapshot.child("cities").child(location).child("info").child(headers).getValue(), headers);
+                                break;
+                            }
+                        }
+                        for (String headers: header){
+                            if(!headers.contains("General") && !headers.contains("Government") && !headers.contains("Area") && !headers.contains("Population"))
+                                getDetails((Map<String,Object>) dataSnapshot.child("cities").child(location).child("info").child(headers).getValue(), headers);
+                        }
+                        progressBar.setVisibility(View.GONE);
+                    }
                 }
 
                 @Override
@@ -187,13 +269,26 @@ public class Information extends Fragment {
             });
         }
 
-        private class ScrapingTask extends AsyncTask {
+    private void getDetails(Map<String,Object> value, String header) {
+        ArrayList<Info> infos = new ArrayList<>();
+        for (Map.Entry<String, Object> entry : value.entrySet()){
+            infos.add(new Info(entry.getKey(),entry.getValue().toString()));
+        }
+        rearrangeDetails(infos,header);
+    }
+
+    private void getHeaders(Map<String,Object> value){
+            header = new ArrayList<>();
+        for (Map.Entry<String, Object> entry : value.entrySet()){
+            header.add(entry.getKey());
+        }
+    }
+
+    private class ScrapingTask extends AsyncTask {
 
                 @Override
                 protected void onPostExecute(Object o) {
-                        ArrayList<Info> infos = (ArrayList<Info>)o;
-                        rearrangeDetails(infos);
-                        addInfo(infos);
+                    getInfo();
                 }
 
                 @Override
@@ -300,12 +395,4 @@ public class Information extends Fragment {
 
                 };
         }
-
-        private void addInfo(ArrayList<Info> info){
-                arrayAdapter.clear();
-                arrayAdapter.addAll(info);
-                progressBar.setVisibility(View.GONE);
-        }
-
-
 }
