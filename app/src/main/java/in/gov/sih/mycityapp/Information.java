@@ -175,7 +175,6 @@ public class Information extends Fragment {
                                 keyView.setTextSize(18);
                                 if(position != 0 && getItem(position - 1).getKey().trim().charAt(0) == '•'
                                         && info.getKey().trim().charAt(0) != '•'){
-                                        //Log.e("jk", "" + first_char);
                                         keyView.setPadding(0, 200, 0, 200);
                                 }
                                 else {
@@ -293,11 +292,11 @@ public class Information extends Fragment {
 
                 @Override
                 protected Object doInBackground(Object[] objects) {
-                        int q=1,k=0,l;
+                        int q, k = 0, l;
                         ArrayList<Info> infos = new ArrayList<>();
                         String query = city +' '+state;
-                        query=query.replaceAll(" ","+");
-                        String url = "https://www.google.com/search?q=Wikipedia+" + query;
+                        query = query.replaceAll(" ","+");
+                        String url = "https://www.google.com/search?q=" + query + "+city+Wikipedia";
                         try{
                                 Document html = Jsoup.connect(url).get();
                                 Elements places = html.select("div[class=r]");
@@ -307,9 +306,9 @@ public class Information extends Fragment {
 
                                 html = Jsoup.connect(url).get();
                                 places = html.select("table[class=infobox geography vcard]");
-                                int f=0;
-                                String country="Country",nation="Nation";
-                                Elements placex =places.select("tr[class^=merged]");
+                                int f = 0;
+                                String country = "Country",nation="Nation";
+                                Elements placex = places.select("tr[class^=merged]");
                                 String header = "General";
                                 int gen_count = 1;
                                 int head_count = 1;
@@ -317,27 +316,27 @@ public class Information extends Fragment {
                                 for(int i = 0;i < size;i ++){
                                         try{
                                                 String string = places.select("tr[class^=merged]").eq(i).text();
-                                                placex =places.select("tr[class^=merged]").eq(i);
+                                                placex = places.select("tr[class^=merged]").eq(i);
 
-                                                if(f==0&&(string.contains(country)||string.contains(nation))) {
+                                                if(f == 0 && (string.contains(country) || string.contains(nation))) {
                                                         f = 1;
                                                         continue;
                                                 }
-                                                if (f==0)
+                                                if (f == 0)
                                                     continue;
                                                 String key, value;
                                                 key = placex.select("th").text();
                                                 value = placex.select("td").text();
-                                                q=1;
-                                                while(q==1){
-                                                        q=0;
-                                                        l=value.length();
-                                                        for(int j=0;j<l;j++){
-                                                                if(value.charAt(j)=='[')
-                                                                        k=j;
-                                                                if(j!=l-1&&value.charAt(j)==']'&& value.charAt(j+1)=='[')
+                                                q = 1;
+                                                while(q == 1){
+                                                        q = 0;
+                                                        l = value.length();
+                                                        for(int j = 0; j < l; j++){
+                                                                if(value.charAt(j) == '[')
+                                                                        k = j;
+                                                                if(j != l-1 && value.charAt(j) == ']' && value.charAt(j+1) == '[')
                                                                         continue;
-                                                                if(value.charAt(j)==']') {
+                                                                if(value.charAt(j) == ']') {
                                                                         value = value.substring(0, k) + value.substring(j + 1);
                                                                         q = 1;
                                                                 }
@@ -346,16 +345,16 @@ public class Information extends Fragment {
                                                 if (key.contains("Website")){
                                                     value = placex.select("a").attr("href");
                                                 }
-                                                q=1;
-                                                while(q==1){
-                                                        q=0;
-                                                        l=key.length();
-                                                        for(int j=0;j<l;j++){
-                                                                if(key.charAt(j)=='[')
-                                                                        k=j;
-                                                                if(j!=l-1&&key.charAt(j)==']'&& key.charAt(j+1)=='[')
+                                                q = 1;
+                                                while(q == 1){
+                                                        q = 0;
+                                                        l = key.length();
+                                                        for(int j = 0; j < l; j++){
+                                                                if(key.charAt(j) == '[')
+                                                                        k = j;
+                                                                if(j != l-1 && key.charAt(j) == ']' && key.charAt(j+1) == '[')
                                                                         continue;
-                                                                if(key.charAt(j)==']') {
+                                                                if(key.charAt(j) == ']') {
                                                                         key = key.substring(0, k) + key.substring(j + 1);
                                                                         q = 1;
                                                                 }
@@ -368,7 +367,7 @@ public class Information extends Fragment {
                                                     head_count = 1;
                                                 }
                                                 else if(key.trim().charAt(0) == '•'){
-                                                    l=key.length();
+                                                    l = key.length();
                                                     key = Integer.toString(head_count) + "_ " + key.substring(2,l);
                                                     databaseReference.child("cities").child(location).child("info")
                                                             .child(header).child(key).setValue(value);
@@ -383,16 +382,16 @@ public class Information extends Fragment {
                                                 infos.add(new Info(key,value));
                                         }
                                         catch (Exception e){
-                                                continue;
+
                                         }
                                 }
 
-                        }catch (IOException e){
+                        } catch (IOException e){
 
                         }
 
                         return infos;
 
-                };
+                }
         }
 }
