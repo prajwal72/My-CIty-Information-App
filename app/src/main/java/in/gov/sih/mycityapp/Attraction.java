@@ -2,12 +2,15 @@ package in.gov.sih.mycityapp;
 
 public class Attraction {
 
-    String name,address, url;
-    float avgrat,num;
+    String name, description, imageURL;
+    float rating, numberOfReviews;
 
-    public Attraction()
-    {
-
+    public Attraction(String name, String description, String imageURL, float rating, float numberOfReviews) {
+        this.name = name;
+        this.description = description;
+        this.imageURL = imageURL;
+        this.rating = rating;
+        this.numberOfReviews = numberOfReviews;
     }
 
     public String getName() {
@@ -18,35 +21,35 @@ public class Attraction {
         this.name = name;
     }
 
-    public String getAddress() {
-        return address;
+    public String getDescription() {
+        return description;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public float getAvgrat() {
-        return avgrat;
+    public float getRating() {
+        return rating;
     }
 
-    public void setAvgrat(float avgrat) {
-        this.avgrat = avgrat;
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 
-    public float getNum() {
-        return num;
+    public float getNumberOfReviews() {
+        return numberOfReviews;
     }
 
-    public void setNum(float num) {
-        this.num = num;
+    public void setNumberOfReviews(float numberOfReviews) {
+        this.numberOfReviews = numberOfReviews;
     }
 
-    public String getUrl() {
-        return url;
+    public String getImageURL() {
+        return imageURL;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 }

@@ -73,7 +73,7 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.ViewHo
 
                         if(rating==0.0f) {
                             dref.child(String.valueOf(position)).child("avgrat").setValue(((hospitalModels.get(position).getAvgrat() * hospitalModels.get(position).getNum() - rating + ratingBar.getRating()) / (hospitalModels.get(position).getNum()+1)));
-                            dref.child(String.valueOf(position)).child("num").setValue(hospitalModels.get(position).getNum()+1);
+                            dref.child(String.valueOf(position)).child("numberOfReviews").setValue(hospitalModels.get(position).getNum()+1);
                         }
 
                         if(rating!=0.0f) {

@@ -98,7 +98,7 @@ public class BusFragment extends Fragment {
                 } else {
                     String url = getUrl();
                     Intent intent = new Intent(getActivity(), WebViewActivity.class);
-                    intent.putExtra("url", url);
+                    intent.putExtra("imageURL", url);
                     startActivity(intent);
                 }
             }

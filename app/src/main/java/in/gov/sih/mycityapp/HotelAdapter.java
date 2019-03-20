@@ -76,7 +76,7 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.ViewHolder> 
 
                         if(rating==0.0f) {
                             dref.child(String.valueOf(position)).child("avgrat").setValue(((hotelModels.get(position).getAvgrat() * hotelModels.get(position).getNum() - rating + ratingBar.getRating()) / (hotelModels.get(position).getNum()+1)));
-                            dref.child(String.valueOf(position)).child("num").setValue(hotelModels.get(position).getNum()+1);
+                            dref.child(String.valueOf(position)).child("numberOfReviews").setValue(hotelModels.get(position).getNum()+1);
                         }
 
                         if(rating!=0.0f) {

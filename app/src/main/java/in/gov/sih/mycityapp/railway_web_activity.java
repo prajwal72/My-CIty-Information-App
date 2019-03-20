@@ -39,12 +39,12 @@ public class railway_web_activity extends AppCompatActivity {
 
 //        mwebview.setWebViewClient(new WebViewClient() {
 //            @Override
-//            public void onLoadResource(WebView view, String url) {
-//                super.onLoadResource(view, url);
+//            public void onLoadResource(WebView view, String imageURL) {
+//                super.onLoadResource(view, imageURL);
 //
 //            }
 //
-//            public void onPageFinished(WebView view, String url) {
+//            public void onPageFinished(WebView view, String imageURL) {
 //                // do your stuff here
 //            }
 //        });

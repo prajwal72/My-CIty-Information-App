@@ -7,12 +7,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -34,16 +35,14 @@ import java.util.Map;
 
 public class InformationFragment extends Fragment {
 
-        private ArrayList<Info> info;
+        private static String LOG_TAG = "InformationFragment";
         private ArrayList<String> header;
         private ArrayAdapter arrayAdapter;
-        private ListView list;
-        private Context context;
         private DatabaseReference databaseReference;
         private String city;
         private String state;
         private String location;
-        private RelativeLayout progressBar;
+        private ProgressBar progressBar;
 
         public InformationFragment() {
                 // Required empty public constructor
@@ -60,12 +59,11 @@ public class InformationFragment extends Fragment {
                 // Inflate the layout for this fragment
                 View returnView = inflater.inflate(R.layout.activity_information, container,
                         false);
-                list = (ListView)returnView.findViewById(R.id.list);
-                context = getContext();
-                SharedPreferences sharedPreferences=context.getSharedPreferences("MyPrefs",Context.MODE_PRIVATE);
-                SharedPreferences statePreferences=context.getSharedPreferences("statePrefs",Context.MODE_PRIVATE);
+            ListView list = (ListView) returnView.findViewById(R.id.list);
+            Context context = getContext();
+                SharedPreferences sharedPreferences= context.getSharedPreferences("MyPrefs",Context.MODE_PRIVATE);
+                SharedPreferences statePreferences= context.getSharedPreferences("statePrefs",Context.MODE_PRIVATE);
 
-                info = new ArrayList<>();
                 city = sharedPreferences.getString("address"," ");
                 state = statePreferences.getString(city," ");
                 location = city+","+state;
@@ -75,7 +73,7 @@ public class InformationFragment extends Fragment {
                 arrayAdapter = new InfoAdapter( getActivity(),1,new ArrayList<Info>());
                 list.setAdapter(arrayAdapter);
 
-                progressBar = (RelativeLayout)returnView.findViewById(R.id.progress_bar);
+                progressBar = (ProgressBar) returnView.findViewById(R.id.progress_bar);
 
                 getInfo();
 
@@ -84,11 +82,6 @@ public class InformationFragment extends Fragment {
 
         private class Info {
                 private String key, value;
-
-                public Info(){
-                        key = "";
-                        value = "";
-                }
 
                 public Info(String key, String value){
                         this.key = key;
@@ -116,12 +109,6 @@ public class InformationFragment extends Fragment {
         private class OrderInfo {
             private String key, value;
             private int order;
-
-            public OrderInfo(){
-                order = 0;
-                key = "";
-                value = "";
-            }
 
             public OrderInfo(int order, String key, String value){
                 this.order = order;
@@ -262,7 +249,7 @@ public class InformationFragment extends Fragment {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                    Log.e(LOG_TAG, databaseError.getMessage());
                 }
             });
         }
@@ -292,8 +279,7 @@ public class InformationFragment extends Fragment {
                 @Override
                 protected Object doInBackground(Object[] objects) {
                         int q, k = 0, l;
-                        ArrayList<Info> infos = new ArrayList<>();
-                        String query = city +' '+state;
+                        String query = city + ' ' + state;
                         query = query.replaceAll(" ","+");
                         String url = "https://www.google.com/search?q=" + query + "+city+Wikipedia";
                         try{
@@ -378,18 +364,17 @@ public class InformationFragment extends Fragment {
                                                             .child("General").child(key).setValue(value);
                                                     gen_count++;
                                                 }
-                                                infos.add(new Info(key,value));
                                         }
                                         catch (Exception e){
-
+                                            Log.e(LOG_TAG, e.getMessage());
                                         }
                                 }
 
                         } catch (IOException e){
-
+                            Log.e(LOG_TAG, e.getMessage());
                         }
 
-                        return infos;
+                        return null;
 
                 }
         }

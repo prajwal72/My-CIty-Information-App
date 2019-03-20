@@ -15,7 +15,7 @@ public class WebViewActivity extends AppCompatActivity {
                 super.onCreate(savedInstanceState);
                 setContentView(R.layout.activity_web_view);
 
-                url = getIntent().getStringExtra("url");
+                url = getIntent().getStringExtra("imageURL");
 
                 WebView webView = (WebView) findViewById(R.id.webview);
                 webView.loadUrl(url);

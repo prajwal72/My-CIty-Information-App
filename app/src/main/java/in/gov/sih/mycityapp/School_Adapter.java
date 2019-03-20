@@ -144,7 +144,7 @@ public class School_Adapter extends RecyclerView.Adapter<School_Adapter.ViewHold
                            float rating = sharedPreferences.getFloat("rrt", 0.0f);
                            if (rating == 0.0f || schoolmodels.get(i).getNum()==0) {
                                dref.child(String.valueOf(i)).child("avgrat").setValue(((schoolmodels.get(i).getAvgrat() * schoolmodels.get(i).getNum() - rating + ratingBar.getRating()) / (schoolmodels.get(i).getNum() + 1)));
-                               dref.child(String.valueOf(i)).child("num").setValue(schoolmodels.get(i).getNum() + 1);
+                               dref.child(String.valueOf(i)).child("numberOfReviews").setValue(schoolmodels.get(i).getNum() + 1);
                            }
 
                            if (rating != 0.0f) {

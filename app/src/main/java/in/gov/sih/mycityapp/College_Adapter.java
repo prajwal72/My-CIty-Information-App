@@ -74,7 +74,7 @@ public class College_Adapter extends RecyclerView.Adapter<College_Adapter.ViewHo
                         float rating = sharedPreferences.getFloat("rrt", 0.0f);
                         if (rating == 0.0f) {
                             dref.child(String.valueOf(i)).child("avgrat").setValue(((collegemodels.get(i).getAvgrat() * collegemodels.get(i).getNum() - rating + ratingBar.getRating()) / (collegemodels.get(i).getNum() + 1)));
-                            dref.child(String.valueOf(i)).child("num").setValue(collegemodels.get(i).getNum() + 1);
+                            dref.child(String.valueOf(i)).child("numberOfReviews").setValue(collegemodels.get(i).getNum() + 1);
                         }
 
                         if (rating != 0.0f) {
