@@ -1,11 +1,11 @@
 package in.gov.sih.mycityapp;
 
-public class AttractionModel {
+public class Attraction {
 
     String name,address, url;
     float avgrat,num;
 
-    public AttractionModel()
+    public Attraction()
     {
 
     }

@@ -25,15 +25,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 
-public class Attraction_Adapter extends RecyclerView.Adapter<Attraction_Adapter.ViewHolder>{
+public class AttractionAdapter extends RecyclerView.Adapter<AttractionAdapter.ViewHolder>{
 
 
-    ArrayList<AttractionModel> attractionModels;
+    ArrayList<Attraction> attractionModels;
     Context context;
     ViewGroup group;
 
 
-    public Attraction_Adapter(ArrayList<AttractionModel> attractionModels)
+    public AttractionAdapter(ArrayList<Attraction> attractionModels)
     {
         this.attractionModels=attractionModels;
     }
@@ -77,7 +77,7 @@ public class Attraction_Adapter extends RecyclerView.Adapter<Attraction_Adapter.
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                    Attractions_frag.scrollpos = position;
+                    AttractionFragment.scrollpos = position;
 
                         if(rating==0.0f) {
                             dref.child(String.valueOf(position)).child("avgrat").setValue(((attractionModels.get(position).getAvgrat() * attractionModels.get(position).getNum() - rating + ratingBar.getRating()) / (attractionModels.get(position).getNum()+1)));
@@ -115,9 +115,9 @@ public class Attraction_Adapter extends RecyclerView.Adapter<Attraction_Adapter.
         TextView name,address,rev,ret;
         RatingBar rat;
         ImageView img;
-        ArrayList<AttractionModel> attractionModels;
+        ArrayList<Attraction> attractionModels;
 
-        public ViewHolder(@NonNull View itemView, Context context,ArrayList<AttractionModel> attractionModels) {
+        public ViewHolder(@NonNull View itemView, Context context,ArrayList<Attraction> attractionModels) {
             super(itemView);
             this.attractionModels=attractionModels;
             name=itemView.findViewById(R.id.name);

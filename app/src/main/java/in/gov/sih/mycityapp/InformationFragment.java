@@ -32,7 +32,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-public class Information extends Fragment {
+public class InformationFragment extends Fragment {
 
         private ArrayList<Info> info;
         private ArrayList<String> header;
@@ -45,12 +45,12 @@ public class Information extends Fragment {
         private String location;
         private RelativeLayout progressBar;
 
-        public Information() {
+        public InformationFragment() {
                 // Required empty public constructor
         }
 
-        public static Information newInstance() {
-                Information fragment = new Information();
+        public static InformationFragment newInstance() {
+                InformationFragment fragment = new InformationFragment();
                 return fragment;
         }
 
@@ -73,7 +73,6 @@ public class Information extends Fragment {
                 databaseReference = FirebaseDatabase.getInstance().getReference();
 
                 arrayAdapter = new InfoAdapter( getActivity(),1,new ArrayList<Info>());
-                arrayAdapter.addAll(info);
                 list.setAdapter(arrayAdapter);
 
                 progressBar = (RelativeLayout)returnView.findViewById(R.id.progress_bar);

@@ -19,21 +19,16 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+public class AttractionFragment extends Fragment {
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class Attractions_frag extends Fragment {
+    public static int scrollpos = 0;
+    private DatabaseReference dref;
+    private ArrayList<Attraction> attraction;
+    private RecyclerView recyclerView;
+    private AttractionAdapter attractionAdapter;
+    private RelativeLayout progressBar;
 
-        public static int scrollpos = 0;
-
-     DatabaseReference dref;
-     ArrayList<AttractionModel> attractionModels;
-     RecyclerView recyclerView;
-     Attraction_Adapter attraction_adapter;
-     RelativeLayout progressBar;
-
-    public Attractions_frag() {
+    public AttractionFragment() {
         // Required empty public constructor
     }
 
@@ -42,29 +37,29 @@ public class Attractions_frag extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_attractions, container, false);
-        recyclerView=view.findViewById(R.id.recycler);
+        View view = inflater.inflate(R.layout.fragment_attraction, container, false);
+        recyclerView =view.findViewById(R.id.recycler);
 
         progressBar = (RelativeLayout) view.findViewById(R.id.progress_bar);
 
-        attractionModels=new ArrayList<>();
-        dref= FirebaseDatabase.getInstance().getReference("mainattraction");
+        attraction = new ArrayList<>();
+        dref = FirebaseDatabase.getInstance().getReference("mainattraction");
         dref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                attractionModels.clear();
+                attraction.clear();
                 for(DataSnapshot ds: dataSnapshot.getChildren())
                 {
-                    AttractionModel att=ds.getValue(AttractionModel.class);
-                    attractionModels.add(att);
+                    Attraction att = ds.getValue(Attraction.class);
+                    attraction.add(att);
                 }
 
-                 attraction_adapter=new Attraction_Adapter(attractionModels);
-                 recyclerView.setAdapter(attraction_adapter);
-                  recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                  recyclerView.smoothScrollToPosition(scrollpos);
+                 attractionAdapter = new AttractionAdapter(attraction);
+                 recyclerView.setAdapter(attractionAdapter);
+                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                 recyclerView.smoothScrollToPosition(scrollpos);
 
-                  progressBar.setVisibility(View.GONE);
+                 progressBar.setVisibility(View.GONE);
 
             }
 

@@ -155,7 +155,7 @@ public class DetailsActivity extends AppCompatActivity {
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    return new Attractions_frag();
+                    return new AttractionFragment();
                 case 1:
                     return new TrainScheduleFragment().newInstance();
                 case 2:
@@ -169,7 +169,7 @@ public class DetailsActivity extends AppCompatActivity {
                 case 6:
                     return new School_fragment();
                 case 7:
-                    return new Information().newInstance();
+                    return new InformationFragment().newInstance();
                 default:
                     return null;
             }
