@@ -75,7 +75,7 @@ public class InformationFragment extends Fragment {
                 arrayAdapter = new InfoAdapter( getActivity(),1,new ArrayList<Info>());
                 list.setAdapter(arrayAdapter);
 
-                progressBar = (ProgressBar) returnView.findViewById(R.id.progress_bar);
+                progressBar = returnView.findViewById(R.id.progress_bar);
 
                 getInfo();
 

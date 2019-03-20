@@ -60,7 +60,7 @@ public class AttractionFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_attraction, container, false);
         recyclerView = view.findViewById(R.id.recycler);
 
-        progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+        progressBar = view.findViewById(R.id.progress_bar);
 
         Context context = getContext();
         SharedPreferences sharedPreferences= context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
