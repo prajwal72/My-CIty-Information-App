@@ -66,7 +66,7 @@ public class InformationFragment extends Fragment {
 
                 city = sharedPreferences.getString("address"," ");
                 state = statePreferences.getString(city," ");
-                location = city+","+state;
+                location = city + "," + state;
 
                 databaseReference = FirebaseDatabase.getInstance().getReference();
 

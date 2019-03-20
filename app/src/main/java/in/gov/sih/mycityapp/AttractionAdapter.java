@@ -28,25 +28,29 @@ import java.util.ArrayList;
 public class AttractionAdapter extends RecyclerView.Adapter<AttractionAdapter.ViewHolder>{
 
 
-    ArrayList<Attraction> attractionModels;
-    Context context;
-    ViewGroup group;
+    private ArrayList<Attraction> attractionModels;
+    private Context context;
+    private String city;
+    private String location;
 
 
     public AttractionAdapter(ArrayList<Attraction> attractionModels)
     {
-        this.attractionModels=attractionModels;
+        this.attractionModels = attractionModels;
     }
 
 
 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        context=parent.getContext();
-        group = parent;
+        context = parent.getContext();
+        SharedPreferences sharedPreferences= context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        SharedPreferences statePreferences= context.getSharedPreferences("statePrefs",Context.MODE_PRIVATE);
+        city = sharedPreferences.getString("address"," ");
+        String state = statePreferences.getString(city, " ");
+        location = city + "," + state;
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.atttraction_item,parent,false);
-        ViewHolder viewHolder=new ViewHolder(view,parent.getContext(),attractionModels);
-        return viewHolder;
+        return new ViewHolder(view,parent.getContext(),attractionModels);
     }
 
     @Override
@@ -54,24 +58,24 @@ public class AttractionAdapter extends RecyclerView.Adapter<AttractionAdapter.Vi
         Glide.with(context).load(attractionModels.get(position).getImageURL()).into(holder.img);
         holder.name.setText(attractionModels.get(position).getName());
         final String hotelName = attractionModels.get(position).getName();
-        final String uid=FirebaseAuth.getInstance().getUid().substring(0,10);
+        final String uid = FirebaseAuth.getInstance().getUid();
         holder.address.setText(attractionModels.get(position).getDescription());
-        int revv=(int)attractionModels.get(position).getNumberOfReviews();
-        holder.rev.setText(revv+" reviews");
+        int reviews = (int) attractionModels.get(position).getNumberOfReviews();
+        holder.rev.setText(reviews + " reviews");
         holder.rat.setRating(attractionModels.get(position).getRating());
         holder.ret.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                AlertDialog.Builder builder=new AlertDialog.Builder(context);
-                final RatingBar ratingBar=new RatingBar(context);
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                final RatingBar ratingBar = new RatingBar(context);
                 ratingBar.setPadding(100, 100, 100, 0);
-                final DatabaseReference dref=FirebaseDatabase.getInstance().getReference("mainattraction");
-                final SharedPreferences sharedPreferences=context.getSharedPreferences("Ratings",Context.MODE_PRIVATE);
-                final SharedPreferences.Editor editor=sharedPreferences.edit();
+                final DatabaseReference dref = FirebaseDatabase.getInstance().getReference();
+                final SharedPreferences sharedPreferences = context.getSharedPreferences("Ratings",Context.MODE_PRIVATE);
+                final SharedPreferences.Editor editor = sharedPreferences.edit();
                 final float rating = sharedPreferences.getFloat(uid+hotelName,0.0f);
                 builder.setView(ratingBar);
-                if(rating!=0.0f)
+                if(rating != 0.0f)
                     ratingBar.setRating(rating);
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
@@ -80,12 +84,12 @@ public class AttractionAdapter extends RecyclerView.Adapter<AttractionAdapter.Vi
                     AttractionFragment.scrollpos = position;
 
                         if(rating==0.0f) {
-                            dref.child(String.valueOf(position)).child("avgrat").setValue(((attractionModels.get(position).getRating() * attractionModels.get(position).getNumberOfReviews() - rating + ratingBar.getRating()) / (attractionModels.get(position).getNumberOfReviews()+1)));
-                            dref.child(String.valueOf(position)).child("numberOfReviews").setValue(attractionModels.get(position).getNumberOfReviews()+1);
+                            dref.child("cities").child(location).child("attractions").child(String.valueOf(position)).child("rating").setValue(((attractionModels.get(position).getRating() * attractionModels.get(position).getNumberOfReviews() - rating + ratingBar.getRating()) / (attractionModels.get(position).getNumberOfReviews()+1)));
+                            dref.child("cities").child(location).child("attractions").child(String.valueOf(position)).child("numberOfReviews").setValue(attractionModels.get(position).getNumberOfReviews()+1);
                         }
 
                         if(rating!=0.0f) {
-                            dref.child(String.valueOf(position)).child("avgrat").setValue(((attractionModels.get(position).getRating() * attractionModels.get(position).getNumberOfReviews() - rating + ratingBar.getRating()) / (attractionModels.get(position).getNumberOfReviews())));
+                            dref.child("cities").child(location).child("attractions").child(String.valueOf(position)).child("rating").setValue(((attractionModels.get(position).getRating() * attractionModels.get(position).getNumberOfReviews() - rating + ratingBar.getRating()) / (attractionModels.get(position).getNumberOfReviews())));
                         }
                         editor.putFloat(uid+hotelName,ratingBar.getRating());
                         editor.commit();
@@ -119,13 +123,13 @@ public class AttractionAdapter extends RecyclerView.Adapter<AttractionAdapter.Vi
 
         public ViewHolder(@NonNull View itemView, Context context,ArrayList<Attraction> attractionModels) {
             super(itemView);
-            this.attractionModels=attractionModels;
-            name=itemView.findViewById(R.id.name);
-            address=itemView.findViewById(R.id.address);
-            rev=itemView.findViewById(R.id.rev);
-            rat=itemView.findViewById(R.id.rat);
-            img=itemView.findViewById(R.id.img);
-            ret=itemView.findViewById(R.id.rate);
+            this.attractionModels = attractionModels;
+            name = itemView.findViewById(R.id.name);
+            address = itemView.findViewById(R.id.address);
+            rev = itemView.findViewById(R.id.rev);
+            rat = itemView.findViewById(R.id.rat);
+            img = itemView.findViewById(R.id.img);
+            ret = itemView.findViewById(R.id.rate);
              name.setOnClickListener(this);
              address.setOnClickListener(this);
              img.setOnClickListener(this);

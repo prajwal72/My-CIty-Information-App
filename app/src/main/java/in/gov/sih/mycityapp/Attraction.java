@@ -13,6 +13,10 @@ public class Attraction {
         this.numberOfReviews = numberOfReviews;
     }
 
+    public Attraction(){
+
+    }
+
     public String getName() {
         return name;
     }

@@ -46,6 +46,7 @@ public class AttractionFragment extends Fragment {
     private String city;
     private String location;
     private String latitude, longitude;
+    private RecyclerView recyclerView;
 
     public AttractionFragment() {
         // Required empty public constructor
@@ -57,7 +58,7 @@ public class AttractionFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_attraction, container, false);
-        RecyclerView recyclerView = view.findViewById(R.id.recycler);
+        recyclerView = view.findViewById(R.id.recycler);
 
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 
@@ -70,12 +71,10 @@ public class AttractionFragment extends Fragment {
         String state = statePreferences.getString(city, " ");
         latitude = (sharedPreferences.getFloat("latitude", 0.0f)) + "";
         longitude = (sharedPreferences.getFloat("longitude", 0.0f)) + "";
-        location = city+","+ state;
+        location = city + "," + state;
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        AttractionAdapter attractionAdapter = new AttractionAdapter(attraction);
-        recyclerView.setAdapter(attractionAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.smoothScrollToPosition(scrollpos);
 
@@ -94,12 +93,14 @@ public class AttractionFragment extends Fragment {
                 }
                 else{
                     attraction.clear();
-                  /*  for(DataSnapshot ds: dataSnapshot.getChildren())
+                    DataSnapshot data = dataSnapshot.child("cities").child(location).child("attractions");
+                    for(DataSnapshot ds: data.getChildren())
                     {
                         Attraction att = ds.getValue(Attraction.class);
                         attraction.add(att);
-                    }*/
-                    Log.d(LOG_TAG,"Attractions Written in database");
+                    }
+                    AttractionAdapter attractionAdapter = new AttractionAdapter(attraction);
+                    recyclerView.setAdapter(attractionAdapter);
                     progressBar.setVisibility(View.GONE);
                 }
             }
