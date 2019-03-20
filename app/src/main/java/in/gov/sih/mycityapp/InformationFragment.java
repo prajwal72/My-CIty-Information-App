@@ -43,6 +43,7 @@ public class InformationFragment extends Fragment {
         private String state;
         private String location;
         private ProgressBar progressBar;
+        private ListView list;
 
         public InformationFragment() {
                 // Required empty public constructor
@@ -57,10 +58,11 @@ public class InformationFragment extends Fragment {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
                 // Inflate the layout for this fragment
-                View returnView = inflater.inflate(R.layout.activity_information, container,
+                View returnView = inflater.inflate(R.layout.fragment_information, container,
                         false);
-            ListView list = (ListView) returnView.findViewById(R.id.list);
-            Context context = getContext();
+                list = (ListView) returnView.findViewById(R.id.list);
+
+                Context context = getContext();
                 SharedPreferences sharedPreferences= context.getSharedPreferences("MyPrefs",Context.MODE_PRIVATE);
                 SharedPreferences statePreferences= context.getSharedPreferences("statePrefs",Context.MODE_PRIVATE);
 
@@ -175,7 +177,7 @@ public class InformationFragment extends Fragment {
         private void rearrangeDetails(ArrayList<Info> infos, String header){
                 ArrayList<Info> infoArrayList = new ArrayList<>();
                 infoArrayList.add(new Info(header,""));
-            ArrayList<OrderInfo> orderInfoArrayList = new ArrayList<>();
+                ArrayList<OrderInfo> orderInfoArrayList = new ArrayList<>();
                 for (int i = 0; i < infos.size(); i++){
                     Info info = infos.get(i);
                     int order = 0;

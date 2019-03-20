@@ -140,6 +140,7 @@ public class AttractionFragment extends Fragment {
                 for(int i = 0;i < places.size(); i++){
                     place = places.select("li").eq(i);
                     String title = place.select("h2").eq(0).text();
+                    title = title.substring(0, 1).toUpperCase() + title.substring(1);
                     String imageURL = place.select("img").eq(0).attr("src");
                     String description = place.select("p").eq(0).text();
 
@@ -237,12 +238,7 @@ public class AttractionFragment extends Fragment {
                 }
 
                 Attraction att = new Attraction(title, description, imageURL, 0, 0);
-                if(filter(att)){
-                    databaseReference.child("cities").child(location).child("attractions").child(Integer.toString(count)).child("name").setValue(title);
-                    databaseReference.child("cities").child(location).child("attractions").child(Integer.toString(count)).child("description").setValue(description);
-                    databaseReference.child("cities").child(location).child("attractions").child(Integer.toString(count)).child("imageURL").setValue(imageURL);
-                    databaseReference.child("cities").child(location).child("attractions").child(Integer.toString(count)).child("rating").setValue(0);
-                    databaseReference.child("cities").child(location).child("attractions").child(Integer.toString(count)).child("numberOfReviews").setValue(0);
+                if(filter(att, count)){
                     count++;
                 }
             }
@@ -252,12 +248,13 @@ public class AttractionFragment extends Fragment {
         }
     }
 
-    private boolean filter(Attraction attraction){
+    private boolean filter(Attraction attraction, int count){
         if(attraction.getDescription() == null)
             return false;
 
         String description = attraction.getDescription();
         String title = attraction.getName();
+        String imageURL = attraction.getImageURL();
 
         if(description.contains("district") || description.contains("District"))
             return false;
@@ -278,11 +275,13 @@ public class AttractionFragment extends Fragment {
             return false;
 
         description = description.substring(0, 1).toUpperCase() + description.substring(1);
-        attraction.setDescription(description);
-
         title = title.substring(0, 1).toUpperCase() + title.substring(1);
-        attraction.setName(title);
 
+        databaseReference.child("cities").child(location).child("attractions").child(Integer.toString(count)).child("name").setValue(title);
+        databaseReference.child("cities").child(location).child("attractions").child(Integer.toString(count)).child("description").setValue(description);
+        databaseReference.child("cities").child(location).child("attractions").child(Integer.toString(count)).child("imageURL").setValue(imageURL);
+        databaseReference.child("cities").child(location).child("attractions").child(Integer.toString(count)).child("rating").setValue(0);
+        databaseReference.child("cities").child(location).child("attractions").child(Integer.toString(count)).child("numberOfReviews").setValue(0);
         return true;
     }
 
